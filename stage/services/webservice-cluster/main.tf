@@ -2,10 +2,15 @@ provider "aws" {
     region = "us-east-2"
 }
 
-variable "server_port" {
-  description = "http server port number"
-  type = number
-  default = 8080
+terraform {
+  backend "s3" {
+    bucket = "terraform-up-and-running-state-japas"
+    key    = "stage/services/webservice-cluster/terraform.tfstate"
+    region = "us-east-2"
+
+    dynamodb_table = "terraform-up-and-running-locks"
+    encrypt = true
+  }
 }
 
 data "aws_vpc" "default" {
@@ -134,7 +139,3 @@ resource "aws_lb_listener_rule" "asg" {
   }
 }
 
-output "alb_dns_name" {
-  value = aws_lb.example.dns_name
-  description = "The domain name of the load balancer"
-}
