@@ -5,6 +5,5 @@ provider "aws" {
 module "users" {
   source = "../../modules/iam"
   
-  count = length(var.user_names)
-  user_name = var.user_names[count.index]
+  user_names = var.user_names
 }

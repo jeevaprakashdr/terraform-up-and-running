@@ -1,3 +1,3 @@
 output "user_arn" {
-  value = aws_iam_user.examples.arn
+  value = values(aws_iam_user.examples)[*].arn
 }
