@@ -12,4 +12,9 @@ module "webserver_cluster" {
   cluster_name = "webserver_cluster_production"
   db_remote_state_bucket = "terraform-up-and-running-state-japas"
   db_remote_state_key =  "prod/data-stores/mysql/terraform.tfstate"
+
+  custom_tags = {
+    Owner = "rj_team"
+    ManagedBy = "terraform"
+  }
 }

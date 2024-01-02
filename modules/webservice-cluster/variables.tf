@@ -33,3 +33,9 @@ variable "server_port" {
   type        = number
   default     = 8080
 }
+
+variable "custom_tags" {
+  description = "The custom tags for the webserver"
+  type = map(string)
+  default = { }
+}
