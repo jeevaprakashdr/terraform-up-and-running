@@ -13,6 +13,11 @@ module "webserver_cluster" {
   min_size = 2
   max_size = 10
   enable_auto_scaling = true
+
+  custom_tags = {
+    Owner = "rj_team-staging"
+    ManagedBy = "terraform"
+  }
 }
 
 resource "aws_security_group_rule" "allow_testing_inbound" {
