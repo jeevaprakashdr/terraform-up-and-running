@@ -12,6 +12,7 @@ module "webserver_cluster" {
   instance_type = "t2.micro"
   min_size = 2
   max_size = 10
+  enable_auto_scaling = true
 }
 
 resource "aws_security_group_rule" "allow_testing_inbound" {

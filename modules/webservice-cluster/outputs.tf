@@ -4,6 +4,6 @@ output "alb_dns_name" {
 }
 
 output "alb_security_group_id" {
-  value = aws_autoscaling_group.example.id
+  value = aws_security_group.alb.id
   description = "ID of the scurity group attached to the load balancer"
 }

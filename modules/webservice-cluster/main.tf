@@ -83,16 +83,18 @@ resource "aws_lb_target_group" "asg" {
   }
 }
 resource "aws_security_group" "instance" {
-  name = "terraform-first-instance-security-group"
-
-  ingress {
-    from_port = var.server_port
-    to_port   = var.server_port
-    protocol  = local.tcp_protocol
-    cidr_blocks = local.all_ips
-  }
+  name = "${var.cluster_name}-instance"
 }
 
+resource "aws_security_group_rule" "instance" {
+  type = "ingress"
+  security_group_id = aws_security_group.instance.id
+  
+  from_port = local.http_port
+  to_port   = local.http_port
+  protocol  = local.tcp_protocol
+  cidr_blocks = local.all_ips
+}
 resource "aws_launch_configuration" "example" {
   image_id              = "ami-0fb653ca2d3203ac1"
   instance_type         = var.instance_type
@@ -134,6 +136,27 @@ resource "aws_autoscaling_group" "example" {
       propagate_at_launch = true
     }
   }
+}
+
+resource "aws_autoscaling_schedule" "scale_out_during_the_working_hours" {
+  count = var.enable_auto_scaling ? 1 : 0
+
+  scheduled_action_name = "${var.cluster_name}-scale_out_during_the_working_hours"
+  min_size = 2
+  max_size = 10
+  desired_capacity = 4
+  recurrence = "0 9 * * *"
+  autoscaling_group_name = aws_autoscaling_group.example.name
+}
+
+resource "aws_autoscaling_schedule" "scale_in_at_nights" {
+  count = var.enable_auto_scaling ? 1 : 0
+  scheduled_action_name = "${var.cluster_name}scale_in_at_nights"
+  min_size = 2
+  max_size = 10
+  desired_capacity = 2
+  recurrence = "0 17 * * *"
+  autoscaling_group_name = aws_autoscaling_group.example.name
 }
 
 resource "aws_lb_listener_rule" "asg" { 
