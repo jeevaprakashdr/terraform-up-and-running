@@ -145,3 +145,14 @@ resource "aws_instance" "webserver" {
     name = "terraform webserver"
   }
 }
+
+terraform {
+  backend "s3" {
+    bucket = "terraform-up-and-running-state-2024-3qi9"
+    key = "stage/services/webserver-cluster/terraform.tfstate"
+    region = "us-east-2"
+
+    dynamodb_table = "terraform-up-and-running-locks"
+    encrypt = true
+  }
+}
