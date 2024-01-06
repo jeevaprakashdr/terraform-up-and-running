@@ -5,9 +5,9 @@ provider "aws" {
 module "webserver_cluster" {
   source = "../../../modules/services/webserver-cluster"
 
-  cluster_name = "webserver-staging"
-  db_remote_state_bucket = var.db_remote_state_bucket
-  db_remote_state_key = var.db_remote_state_key
+  cluster_name = "webserver-production"
+  db_remote_state_bucket = "terraform-up-and-running-state-2024-3qi9"
+  db_remote_state_key = "stage/services/mysql/terraform.tfstate"
 
   instance_type = "t2.micro"
   min_size = 2
