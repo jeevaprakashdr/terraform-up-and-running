@@ -2,7 +2,9 @@ provider "aws" {
   region = "us-east-2"
 }
 
-resource "aws_iam_user" "users" {
-   count = length(var.users)
-   name = var.users[count.index]
+module "users" {
+  source = "../../modules/landing-zones/iam"
+
+  count = length(var.user_names)
+  user_name = var.user_names[count.index]
 }
