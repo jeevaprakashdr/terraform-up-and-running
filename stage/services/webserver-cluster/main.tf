@@ -57,13 +57,11 @@ resource "aws_launch_configuration" "webserver" {
   instance_type = "t2.micro"
   security_groups = [ aws_security_group.instance.id ]
   
-  user_data = <<-EOF
-                #!/bin/bash
-                echo "Hello learner from AWS" >> index.html
-                echo "database address: ${data.terraform_remote_state.database.outputs.address}" >> index.html
-                echo "database port: ${data.terraform_remote_state.database.outputs.port}" >> index.html
-                nohup busybox httpd -f -p ${var.server_port} &
-                EOF
+  user_data = templatefile("user_data.sh", {
+    server_port = var.server_port
+    database_address = data.terraform_remote_state.database.outputs.address
+    database_port = data.terraform_remote_state.database.outputs.port
+  })
   lifecycle {
     create_before_destroy = true
   }
