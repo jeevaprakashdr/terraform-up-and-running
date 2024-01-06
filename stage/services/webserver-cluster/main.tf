@@ -13,6 +13,16 @@ data "aws_subnets" "default" {
   }
 }
 
+data "terraform_remote_state" "database" {
+  backend = "s3"
+
+  config = {
+    bucket = "terraform-up-and-running-state-2024-3qi9"
+    key = "stage/services/mysql/terraform.tfstate"
+    region = "us-east-2"
+  }
+}
+
 resource "aws_security_group" "instance" {
   name = "terraform-webserver-security-group"
 
@@ -50,6 +60,8 @@ resource "aws_launch_configuration" "webserver" {
   user_data = <<-EOF
                 #!/bin/bash
                 echo "Hello learner from AWS" >> index.html
+                echo "database address: ${data.terraform_remote_state.database.outputs.address}" >> index.html
+                echo "database port: ${data.terraform_remote_state.database.outputs.port}" >> index.html
                 nohup busybox httpd -f -p ${var.server_port} &
                 EOF
   lifecycle {
@@ -128,22 +140,6 @@ resource "aws_autoscaling_group" "webserver" {
       value = "terraform_autoscalling_webserver"
       propagate_at_launch = true
     }
-}
-resource "aws_instance" "webserver" {
-  ami = "ami-0fb653ca2d3203ac1"
-  instance_type = "t2.micro"
-  vpc_security_group_ids = [ aws_security_group.instance.id ]
-
-  user_data = <<-EOF
-                #!/bin/bash
-                echo "Hello learner from AWS" >> index.html
-                nohup busybox httpd -f -p ${var.server_port} &
-                EOF
-  
-  user_data_replace_on_change = true
-  tags = {
-    name = "terraform webserver"
-  }
 }
 
 terraform {
