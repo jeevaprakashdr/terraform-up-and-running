@@ -1,3 +1,4 @@
-resource "aws_iam_user" "user" {
-   name = var.user_name
+resource "aws_iam_user" "users" {
+   for_each = toset(var.user_names)
+   name = each.value
 }
