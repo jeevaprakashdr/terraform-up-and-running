@@ -118,7 +118,7 @@ resource "aws_lb_listener_rule" "asg" {
 }
 
 resource "aws_autoscaling_group" "webserver" {
-    name = "${var.cluster_name}-${aws_launch_configuration.webserver.name}"
+    name = var.cluster_name
     launch_configuration = aws_launch_configuration.webserver.name
     vpc_zone_identifier = data.aws_subnets.default.ids
     
@@ -127,8 +127,10 @@ resource "aws_autoscaling_group" "webserver" {
 
     min_size = var.min_size
     max_size = var.max_size
-    min_elb_capacity = var.min_size
-
+    
+    instance_refresh {
+      strategy = "Rolling"
+    }
     tag {
       key = "Name"
       value = "terraform_autoscalling_${var.cluster_name}"
@@ -145,10 +147,6 @@ resource "aws_autoscaling_group" "webserver" {
         value = tag.value
         propagate_at_launch = true
       }
-    }
-
-    lifecycle {
-      create_before_destroy = true
     }
 }
 
