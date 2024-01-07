@@ -131,6 +131,18 @@ resource "aws_autoscaling_group" "webserver" {
       value = "terraform_autoscalling_${var.cluster_name}"
       propagate_at_launch = true
     }
+
+    dynamic "tag" {
+      for_each = {
+        for key, value in var.custom_tags: key => upper(value) if key != "Name"
+      }
+
+      content {
+        key = tag.key
+        value = tag.value
+        propagate_at_launch = true
+      }
+    }
 }
 
 data "terraform_remote_state" "database" {

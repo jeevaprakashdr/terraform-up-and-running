@@ -13,6 +13,11 @@ module "webserver_cluster" {
   min_size = 2
   max_size = 10
   server_port = var.server_port
+
+    custom_tags = {
+    "Owner" = "Prod-user"
+    "ManagedBy" = "Terraform"
+  }
 }
 
 resource "aws_autoscaling_schedule" "scale_out_during_working_hours" {
