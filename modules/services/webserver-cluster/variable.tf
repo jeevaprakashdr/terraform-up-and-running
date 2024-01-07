@@ -36,3 +36,12 @@ variable "custom_tags" {
 variable "enable_autoscaling" {
   type = bool
 }
+
+variable "ami" {
+  type = string
+  default = "ami-0fb653ca2d3203ac1"
+}
+
+variable "server_startup_text" {
+  type = string
+}

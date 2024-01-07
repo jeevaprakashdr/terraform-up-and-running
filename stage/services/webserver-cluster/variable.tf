@@ -18,3 +18,8 @@ variable "enable_autoscaling" {
   type = bool
   default = false
 }
+
+variable "server_startup_text" {
+  type = string
+  default = "Staging Request Served: Hello learner from AWS"
+}

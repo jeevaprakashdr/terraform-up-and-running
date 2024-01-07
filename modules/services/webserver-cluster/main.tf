@@ -45,12 +45,13 @@ resource "aws_security_group_rule" "allow_all_outbound" {
 }
 
 resource "aws_launch_configuration" "webserver" {
-  image_id = "ami-0fb653ca2d3203ac1"
+  image_id = var.ami
   instance_type = var.instance_type
   security_groups = [ aws_security_group.instance.id ]
   
   user_data = templatefile("${path.module}/user_data.sh", {
     server_port = var.server_port
+    server_startup_text = var.server_startup_text
     database_address = data.terraform_remote_state.database.outputs.address
     database_port = data.terraform_remote_state.database.outputs.port
   })
@@ -117,6 +118,7 @@ resource "aws_lb_listener_rule" "asg" {
 }
 
 resource "aws_autoscaling_group" "webserver" {
+    name = "${var.cluster_name}-${aws_launch_configuration.webserver.name}"
     launch_configuration = aws_launch_configuration.webserver.name
     vpc_zone_identifier = data.aws_subnets.default.ids
     
@@ -125,6 +127,7 @@ resource "aws_autoscaling_group" "webserver" {
 
     min_size = var.min_size
     max_size = var.max_size
+    min_elb_capacity = var.min_size
 
     tag {
       key = "Name"
@@ -142,6 +145,10 @@ resource "aws_autoscaling_group" "webserver" {
         value = tag.value
         propagate_at_launch = true
       }
+    }
+
+    lifecycle {
+      create_before_destroy = true
     }
 }
 
