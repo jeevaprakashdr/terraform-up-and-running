@@ -13,3 +13,8 @@ variable "db_remote_state_key" {
   type = string
   default = "stage/services/mysql/terraform.tfstate"
 }
+
+variable "enable_autoscaling" {
+  type = bool
+  default = false
+}

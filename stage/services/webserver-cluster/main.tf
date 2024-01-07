@@ -13,6 +13,7 @@ module "webserver_cluster" {
   min_size = 2
   max_size = 10
   server_port = var.server_port
+  enable_autoscaling = var.enable_autoscaling
 
   custom_tags = {
     "Owner" = "staging-user"
